@@ -35,9 +35,9 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        if($user_id = $request->get('user_id')) {
+        if($request->user_id) {
 
-            $response = $this->repository->getUsersJobs($user_id);
+            $response = $this->repository->getUsersJobs($request->user_id);
 
         }
         elseif($request->__authenticatedUser->user_type == env('ADMIN_ROLE_ID') || $request->__authenticatedUser->user_type == env('SUPERADMIN_ROLE_ID'))
@@ -47,6 +47,8 @@ class BookingController extends Controller
 
         return response($response);
     }
+    // needs to refactor totally from start to finish
+
 
     /**
      * @param $id
@@ -96,7 +98,7 @@ class BookingController extends Controller
         $adminSenderEmail = config('app.adminemail');
         $data = $request->all();
 
-        $response = $this->repository->storeJobEmail($data);
+        $response = $this->repository->storeJobEmail($request);
 
         return response($response);
     }
@@ -108,7 +110,6 @@ class BookingController extends Controller
     public function getHistory(Request $request)
     {
         if($user_id = $request->get('user_id')) {
-
             $response = $this->repository->getUsersJobsHistory($user_id, $request);
             return response($response);
         }
@@ -194,6 +195,7 @@ class BookingController extends Controller
 
     public function distanceFeed(Request $request)
     {
+        
         $data = $request->all();
 
         if (isset($data['distance']) && $data['distance'] != "") {
